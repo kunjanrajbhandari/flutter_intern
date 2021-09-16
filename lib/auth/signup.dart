@@ -14,66 +14,71 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  bool? error, sending;
-  bool success = false;
-  bool valildate = false;
   String? message;
+
   Validation formValidation = Validation();
   @override
   void initState() {
-    error = false;
     super.initState();
   }
 
-  void showToast(BuildContext context) {
+  void showToast(BuildContext context, String message, Color resColor) {
     final scaffold = ScaffoldMessenger.of(context);
     scaffold.showSnackBar(
       SnackBar(
-        content: Text('$message'),
-        backgroundColor: Colors.blue,
-        action: SnackBarAction(
-            label: 'UNDO', onPressed: scaffold.hideCurrentSnackBar),
+        content: Text(message),
+        backgroundColor: resColor,
       ),
     );
   }
 
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
-
-  TextEditingController name = TextEditingController();
-  TextEditingController sex = TextEditingController();
-  TextEditingController dob = TextEditingController();
-  TextEditingController phone = TextEditingController();
-  TextEditingController address = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController userpassword = TextEditingController();
+  bool loading = false;
+  String? name;
+  String? sex;
+  String? dob;
+  String? phone;
+  String? address;
+  String? email;
+  String? userpassword;
+  void validate() {
+    if (formkey.currentState!.validate()) {
+      print('validate');
+    } else {
+      print("not validate");
+    }
+  }
 
   Future<void> sendData() async {
+    final Color resColor;
     var url =
         Uri.parse('https://polar-beach-17297.herokuapp.com/api/user/register');
+    loading = true;
+    setState(() {});
     var res = await http.post(url, body: {
-      "name": name.text,
-      "sex": sex.text,
-      "dob": dob.text,
-      "phone": phone.text,
-      "address": address.text,
-      "email": email.text,
-      "password": userpassword.text,
+      "name": name,
+      "sex": sex,
+      "dob": dob,
+      "phone": phone,
+      "address": address,
+      "email": email,
+      "password": userpassword,
     }); //sending post request with header data
-
-    if (res.statusCode == 200) {
-      success = true;
-      message = "successfully create account.";
-      setState(() {});
-      print(res.body); //print raw response on console
+    loading = false;
+    setState(() {});
+    if (res.statusCode == 200 || res.statusCode == 201) {
       var data = json.decode(res.body); //decoding json to array
+      message = "Success";
+      resColor = Colors.green;
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+      showToast(context, message!, resColor);
 
       //mark error and refresh UI with setState
 
     } else {
-      success = false;
-      setState(() {});
-      message = "Error during register data.";
-
+      resColor = Colors.red;
+      message = "Request failed with status: ${res.statusCode}.";
+      showToast(context, message!, resColor);
       //mark error and refresh UI with setState
 
     }
@@ -127,150 +132,125 @@ class _SignUpState extends State<SignUp> {
           Form(
               child: Form(
                   key: formkey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   child: Padding(
                     padding: const EdgeInsets.all(25.0),
                     child: Column(
                       children: [
+                        Padding(padding: EdgeInsets.only(top: 10.0)),
                         TextFormField(
                           decoration: InputDecoration(
                               border: OutlineInputBorder(), labelText: "Name"),
+                          //validator: RequiredValidator(errorText: "Required *"),
+                          onChanged: (value) {
+                            name = value;
+                          },
                         ),
+                        Padding(padding: EdgeInsets.only(top: 10.0)),
                         TextFormField(
                           decoration: InputDecoration(
                               border: OutlineInputBorder(), labelText: "Sex"),
+                          //validator: RequiredValidator(errorText: "Required *"),
+                          onChanged: (value) {
+                            sex = value;
+                          },
                         ),
+                        Padding(padding: EdgeInsets.only(top: 10.0)),
                         TextFormField(
                           decoration: InputDecoration(
                               border: OutlineInputBorder(),
-                              labelText: "PhoneNumber"),
+                              labelText: "Date Of Birth"),
+                          //validator: RequiredValidator(errorText: "Required *"),
+                          onChanged: (value) {
+                            dob = value;
+                          },
                         ),
+                        Padding(padding: EdgeInsets.only(top: 10.0)),
                         TextFormField(
                           decoration: InputDecoration(
-                              border: OutlineInputBorder(), labelText: "Name"),
+                              border: OutlineInputBorder(),
+                              labelText: "Phone Number"),
+                          //validator: RequiredValidator(errorText: "Required *"),
+                          onChanged: (value) {
+                            phone = value;
+                          },
                         ),
+                        Padding(padding: EdgeInsets.only(top: 10.0)),
                         TextFormField(
                           decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: "Address"),
+                          //validator: RequiredValidator(errorText: "Required *"),
+                          onChanged: (value) {
+                            address = value;
+                          },
                         ),
+                        Padding(padding: EdgeInsets.only(top: 10.0)),
                         TextFormField(
                           decoration: InputDecoration(
                               border: OutlineInputBorder(), labelText: "Email"),
+                          // validator: MultiValidator([
+                          //   RequiredValidator(errorText: "Required *"),
+                          //   EmailValidator(
+                          //       errorText: "Enter a valid email address"),
+                          // ]),
+                          onChanged: (value) {
+                            email = value;
+                          },
                         ),
+                        Padding(padding: EdgeInsets.only(top: 10.0)),
                         TextFormField(
                           decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: "Password"),
+                          //validator: RequiredValidator(errorText: "Required *"),
+                          onChanged: (value) {
+                            userpassword = value;
+                          },
                         )
                       ],
                     ),
                   ))),
-          // Padding(
-          //   padding: EdgeInsets.all(10.0),
-          //   child: TextField(
-          //     controller: name,
-          //     decoration: InputDecoration(
-          //         border: UnderlineInputBorder(),
-          //         labelText: "Name",
-          //         errorText: valildate == false ? 'Name cannot be empty' : null,
-          //         hintText: "Enter your Name"),
-          //   ),
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.all(10.0),
-          //   child: TextField(
-          //     controller: sex,
-          //     decoration: InputDecoration(
-          //         border: UnderlineInputBorder(),
-          //         errorText: ,
-          //         labelText: "Sex",
-          //         hintText: "Male/Female"),
-          //   ),
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.all(10.0),
-          //   child: TextField(
-          //     controller: dob,
-          //     decoration: InputDecoration(
-          //         border: UnderlineInputBorder(),
-          //         errorText: valildate == false ? 'DOB cannot be empty' : null,
-          //         labelText: "Date of Birth",
-          //         hintText: "2021/5/5"),
-          //   ),
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.all(10.0),
-          //   child: TextField(
-          //     controller: phone,
-          //     decoration: InputDecoration(
-          //         border: UnderlineInputBorder(),
-          //         errorText:
-          //             valildate == false ? 'Phone cannot be empty' : null,
-          //         labelText: "phone",
-          //         hintText: "98123456"),
-          //   ),
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.all(10.0),
-          //   child: TextField(
-          //     controller: address,
-          //     decoration: InputDecoration(
-          //         border: UnderlineInputBorder(),
-          //         errorText:
-          //             valildate == false ? 'address cannot be empty' : null,
-          //         labelText: "Address",
-          //         hintText: "Kathmandu"),
-          //   ),
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.all(10.0),
-          //   child: TextField(
-          //     controller: email,
-          //     decoration: InputDecoration(
-          //         border: UnderlineInputBorder(),
-          //         errorText: MultiValidator()
-          //         labelText: "Email",
-          //         hintText: "example@example.com"),
-          //   ),
-          // ),
-          // Padding(
-          //   padding: EdgeInsets.all(10.0),
-          //   child: TextField(
-          //     controller: userpassword,
-          //     decoration: InputDecoration(
-          //         border: UnderlineInputBorder(),
-          //         errorText: formValidation.validatePassword(userpassword.text),
-          //         labelText: "Password",
-          //         hintText: "write your password"),
-          //   ),
-          // ),
           Column(
             children: [
-              GestureDetector(
-                onTap: () {
-                  sendData();
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Login()));
-                  showToast(context);
-                },
-                child: Container(
-                  height: 55.0,
-                  width: 333.9,
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(11.0)),
-                    color: Colors.red,
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Create an Account",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w500),
+              loading == true
+                  ? CircularProgressIndicator()
+                  : GestureDetector(
+                      onTap: () {
+                        if (phone != null &&
+                            name != null &&
+                            sex != null &&
+                            address != null &&
+                            email != null &&
+                            phone != null &&
+                            userpassword != null) {
+                          //validate();
+                          sendData();
+                        } else {
+                          Color resColor = Colors.red;
+                          message =
+                              "Some Field are empty please fill that field.";
+                          showToast(context, message!, resColor);
+                        }
+                      },
+                      child: Container(
+                        height: 55.0,
+                        width: 333.9,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(11.0)),
+                          color: Colors.red,
+                        ),
+                        child: const Center(
+                          child: Text(
+                            "Create an Account",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
               Padding(
                 padding: const EdgeInsets.only(top: 22.0, left: 88.0),
                 child: Center(

@@ -37,7 +37,15 @@ class _SplashState extends State<Splash> {
         child: Container(
           height: 200.0,
           width: 200.0,
-          child: Image(image: AssetImage('assets/935px-Logo_of_CPN_(UML).png')),
+          child: Column(
+            children: [
+              Image(image: AssetImage('assets/935px-Logo_of_CPN_(UML).png')),
+              Text(
+                "splash screen",
+                style: TextStyle(fontSize: 20.0, color: Colors.red),
+              ),
+            ],
+          ),
         ),
       ),
     );

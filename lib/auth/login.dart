@@ -4,6 +4,7 @@ import 'package:practice/dashboard.dart';
 import 'package:practice/database/database.dart';
 import 'package:practice/model/model.dart';
 import 'package:practice/auth/signup.dart';
+import 'package:practice/validation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -16,11 +17,21 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  void showToast(BuildContext context, String message, Color resColor) {
+    final scaffold = ScaffoldMessenger.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: resColor,
+      ),
+    );
+  }
+
   bool? loading = false;
   String? exception;
   String? username;
   String? password;
-
+  bool validate = false;
   addUser(Users user) async {
     var result = await DB.insert(user);
     print(result);
@@ -47,11 +58,14 @@ class _LoginState extends State<Login> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => Dashboard()));
       print(result);
+    } else if (username == null || password == null) {
+      Color resColor = Colors.red;
+      var message = "Cannot insert Null value.";
+      showToast(context, message, resColor);
     } else {
-      const Center(
-          child: CircularProgressIndicator(
-        backgroundColor: Colors.black,
-      ));
+      Color resColor = Colors.red;
+      var message = "Incorrect Username or password.";
+      showToast(context, message, resColor);
     }
   }
 
@@ -117,8 +131,8 @@ class _LoginState extends State<Login> {
             child: TextField(
               decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
-                  labelText: "Username",
-                  hintText: "Enter your name"),
+                  labelText: "Email",
+                  hintText: "Enter your email"),
               onChanged: (value) {
                 username = value;
               },
@@ -148,6 +162,9 @@ class _LoginState extends State<Login> {
                   ? const CircularProgressIndicator()
                   : GestureDetector(
                       onTap: () async {
+                        setState(() {
+                          password == null ? validate = true : validate = false;
+                        });
                         await userData();
                       },
                       child: Container(
