@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:form_field_validator/form_field_validator.dart';
+//import 'package:form_field_validator/form_field_validator.dart';
 import 'package:practice/auth/login.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -41,13 +41,28 @@ class _SignUpState extends State<SignUp> {
   String? address;
   String? email;
   String? userpassword;
-  void validate() {
-    if (formkey.currentState!.validate()) {
-      print('validate');
-    } else {
-      print("not validate");
+  // void validate() {
+  //   if (formkey.currentState!.validate()) {
+  //     print('validate');
+  //   } else {
+  //     print("not validate");
+  //   }
+  // }
+
+  TextEditingController intialdateval = TextEditingController();
+  Future _selectDate() async {
+    DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: new DateTime.now(),
+        firstDate: new DateTime(2020),
+        lastDate: new DateTime(2030));
+    if (picked != null) {
+      setState(() =>
+          {dob = picked.toString(), intialdateval.text = picked.toString()});
     }
   }
+
+  List<String> gender = ["Male", "Female", "Other"];
 
   Future<void> sendData() async {
     final Color resColor;
@@ -140,34 +155,86 @@ class _SignUpState extends State<SignUp> {
                         Padding(padding: EdgeInsets.only(top: 10.0)),
                         TextFormField(
                           decoration: InputDecoration(
-                              border: OutlineInputBorder(), labelText: "Name"),
+                              hintText: "Enter Your Full Name",
+                              border: OutlineInputBorder(),
+                              labelText: "Full Name"),
                           //validator: RequiredValidator(errorText: "Required *"),
                           onChanged: (value) {
                             name = value;
                           },
                         ),
                         Padding(padding: EdgeInsets.only(top: 10.0)),
-                        TextFormField(
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(), labelText: "Sex"),
-                          //validator: RequiredValidator(errorText: "Required *"),
+                        //code copy from stackoverflow
+                        //url: https://stackoverflow.com/questions/55369732/how-to-add-flutter-dropdownbuttonformfield
+                        DropdownButtonFormField(
+                          value: sex,
+                          hint: Text(
+                            'Choose Your Gender',
+                          ),
                           onChanged: (value) {
-                            sex = value;
+                            setState(() {
+                              sex = value.toString();
+                            });
                           },
+                          onSaved: (value) {
+                            sex = value.toString();
+                          },
+                          decoration:
+                              InputDecoration(border: OutlineInputBorder()),
+                          items: gender.map((String value) {
+                            return DropdownMenuItem(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
                         ),
+
+                        // end dropdownbutton form field
+
                         Padding(padding: EdgeInsets.only(top: 10.0)),
+
+                        //start
+                        //Date and time for Textform field
+                        //copy form https://stackoverflow.com/questions/54127847/flutter-how-to-display-datepicker-when-textformfield-is-clicked
                         TextFormField(
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: "Date Of Birth"),
-                          //validator: RequiredValidator(errorText: "Required *"),
-                          onChanged: (value) {
+                          // focusNode: _focusNode,
+                          keyboardType: TextInputType.phone,
+                          autocorrect: false,
+                          controller: intialdateval,
+                          onSaved: (value) {
                             dob = value;
                           },
+                          onTap: () {
+                            _selectDate();
+                            // FocusScope.of(context).requestFocus(new FocusNode());
+                          },
+
+                          maxLines: 1,
+                          //initialValue: 'Aseem Wangoo',
+                          validator: (value) {
+                            if (value == null) {
+                              return 'Choose Date';
+                            }
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Date of Birth.',
+                            hintText: 'Write Your Date of Birth',
+                            border: OutlineInputBorder(),
+                            //filled: true,
+                            suffixIcon: const Icon(Icons.calendar_today),
+
+                            //icon: const Icon(Icons.calendar_today),
+                            labelStyle: TextStyle(
+                                decorationStyle: TextDecorationStyle.solid),
+                          ),
                         ),
+
+                        //End datatime picker
+
                         Padding(padding: EdgeInsets.only(top: 10.0)),
                         TextFormField(
                           decoration: InputDecoration(
+                              hintText: "Enter your phone number",
                               border: OutlineInputBorder(),
                               labelText: "Phone Number"),
                           //validator: RequiredValidator(errorText: "Required *"),
@@ -178,6 +245,7 @@ class _SignUpState extends State<SignUp> {
                         Padding(padding: EdgeInsets.only(top: 10.0)),
                         TextFormField(
                           decoration: InputDecoration(
+                              hintText: "Enter your Address",
                               border: OutlineInputBorder(),
                               labelText: "Address"),
                           //validator: RequiredValidator(errorText: "Required *"),
@@ -188,7 +256,9 @@ class _SignUpState extends State<SignUp> {
                         Padding(padding: EdgeInsets.only(top: 10.0)),
                         TextFormField(
                           decoration: InputDecoration(
-                              border: OutlineInputBorder(), labelText: "Email"),
+                              hintText: "Enter Your Email",
+                              border: OutlineInputBorder(),
+                              labelText: "Email"),
                           // validator: MultiValidator([
                           //   RequiredValidator(errorText: "Required *"),
                           //   EmailValidator(
@@ -198,16 +268,18 @@ class _SignUpState extends State<SignUp> {
                             email = value;
                           },
                         ),
+
                         Padding(padding: EdgeInsets.only(top: 10.0)),
                         TextFormField(
                           decoration: InputDecoration(
+                              hintText: "Enter Your Password",
                               border: OutlineInputBorder(),
                               labelText: "Password"),
                           //validator: RequiredValidator(errorText: "Required *"),
                           onChanged: (value) {
                             userpassword = value;
                           },
-                        )
+                        ),
                       ],
                     ),
                   ))),
@@ -252,7 +324,8 @@ class _SignUpState extends State<SignUp> {
                       ),
                     ),
               Padding(
-                padding: const EdgeInsets.only(top: 22.0, left: 88.0),
+                padding:
+                    const EdgeInsets.only(top: 11.0, left: 111.0, bottom: 33.0),
                 child: Center(
                   child: Row(
                     children: [

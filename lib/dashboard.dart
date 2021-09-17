@@ -31,6 +31,22 @@ class _DashboardState extends State<Dashboard> {
     print(res);
   }
 
+  String? registrationdate;
+  TextEditingController intialdateval = TextEditingController();
+  Future _selectDate() async {
+    DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: new DateTime.now(),
+        firstDate: new DateTime(2020),
+        lastDate: new DateTime(2030));
+    if (picked != null) {
+      setState(() => {
+            registrationdate = picked.toString(),
+            intialdateval.text = picked.toString()
+          });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

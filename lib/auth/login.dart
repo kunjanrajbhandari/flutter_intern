@@ -60,7 +60,7 @@ class _LoginState extends State<Login> {
       print(result);
     } else if (username == null || password == null) {
       Color resColor = Colors.red;
-      var message = "Cannot insert Null value.";
+      var message = "Username or Password is empty.";
       showToast(context, message, resColor);
     } else {
       Color resColor = Colors.red;
