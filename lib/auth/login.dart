@@ -4,7 +4,7 @@ import 'package:practice/dashboard.dart';
 import 'package:practice/database/database.dart';
 import 'package:practice/model/model.dart';
 import 'package:practice/auth/signup.dart';
-import 'package:practice/validation.dart';
+// import 'package:practice/validation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -32,6 +32,8 @@ class _LoginState extends State<Login> {
   String? username;
   String? password;
   bool validate = false;
+  String? token;
+
   addUser(Users user) async {
     var result = await DB.insert(user);
     print(result);
@@ -49,6 +51,7 @@ class _LoginState extends State<Login> {
     setState(() {});
     dynamic result = json.decode(response.body);
     if (response.statusCode == 200) {
+      token = result['token'];
       Users user = Users(
           id: result['_id'],
           token: result['token'],
@@ -141,14 +144,14 @@ class _LoginState extends State<Login> {
           Padding(
             padding: EdgeInsets.all(15.0),
             child: TextField(
-              decoration: const InputDecoration(
-                  border: UnderlineInputBorder(),
-                  labelText: "Password",
-                  hintText: "Enter your Password"),
-              onChanged: (value) {
-                password = value;
-              },
-            ),
+                decoration: const InputDecoration(
+                    border: UnderlineInputBorder(),
+                    labelText: "Password",
+                    hintText: "Enter your Password"),
+                onChanged: (value) {
+                  password = value;
+                },
+                obscureText: true),
           ),
           Column(
             children: [

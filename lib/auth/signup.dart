@@ -54,7 +54,7 @@ class _SignUpState extends State<SignUp> {
     DateTime? picked = await showDatePicker(
         context: context,
         initialDate: new DateTime.now(),
-        firstDate: new DateTime(2020),
+        firstDate: new DateTime(1950),
         lastDate: new DateTime(2030));
     if (picked != null) {
       setState(() =>
@@ -164,6 +164,7 @@ class _SignUpState extends State<SignUp> {
                           },
                         ),
                         Padding(padding: EdgeInsets.only(top: 10.0)),
+                        //Gender dropdown
                         //code copy from stackoverflow
                         //url: https://stackoverflow.com/questions/55369732/how-to-add-flutter-dropdownbuttonformfield
                         DropdownButtonFormField(
