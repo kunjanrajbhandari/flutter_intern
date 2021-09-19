@@ -1,3 +1,29 @@
+class UserAsigned {
+  String provision;
+  String district;
+  String fedConstituency;
+  String provConstituency;
+  String localBody;
+  String ward;
+  List<dynamic> booth = [];
+
+  UserAsigned({
+    // this.name = "",
+    // this.sex = "",
+    // this.dob = "",
+    // this.email = "",
+    // this.address = "",
+    // this.phone = "",
+    this.provision = "",
+    this.district = "",
+    this.fedConstituency = "",
+    this.provConstituency = "",
+    this.localBody = "",
+    this.ward = "",
+    required this.booth,
+  });
+}
+
 class UserData {
   String? name;
   String? sex;
@@ -5,27 +31,4 @@ class UserData {
   String? email;
   String? address;
   String? phone;
-
-  String? provision;
-  String? district;
-  String? fedConstituency;
-  String? provConstituency;
-  String? localBody;
-  String? ward;
-  String? booth;
-
-  UserData(
-      {required this.name,
-      required this.sex,
-      required this.dob,
-      required this.email,
-      required this.address,
-      required this.phone,
-      required this.provision,
-      required this.district,
-      required this.fedConstituency,
-      required this.provConstituency,
-      required this.localBody,
-      required this.ward,
-      required this.booth});
 }

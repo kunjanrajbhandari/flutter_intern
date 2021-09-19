@@ -1,4 +1,5 @@
 //import 'package:carousel_slider/carousel_slider.dart';
+import 'dart:core';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -15,7 +16,9 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  bool? loading = false;
   List<dynamic> userListdash = [];
+  List<UserAsigned> userAsignedList = [];
 
   @override
   String? token;
@@ -25,7 +28,9 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
   }
 
+  UserData myuser = UserData();
   Future<void> userData() async {
+    userAsignedList = [];
     var res = await DB.query();
     setState(() {
       userListdash = res;
@@ -35,6 +40,7 @@ class _DashboardState extends State<Dashboard> {
 
     var url = Uri.parse(
         'https://polar-beach-17297.herokuapp.com/api/user/user/profile');
+    loading = true;
 
     setState(() {});
     var response = await http.get(url, headers: {
@@ -42,30 +48,51 @@ class _DashboardState extends State<Dashboard> {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     });
-
+    loading = false;
+    setState(() {});
     print(response.body);
 
     setState(() {});
     dynamic result = json.decode(response.body);
 
     if (response.statusCode == 200) {
-      print(result);
-      UserData(
-          name: result['name'],
-          phone: result['phone'],
-          sex: result['sex'],
-          address: result['address'],
-          email: result['email'],
-          dob: result['dob'],
-          provision: result['assined'][0]['provision'],
-          provConstituency: result['assined'][0]['provConstituency'],
-          fedConstituency: result['assined'][0]['fedConstituency'],
-          localBody: result['assined'][0]['localBody'],
-          ward: result['assined'][0]['ward'],
-          booth: result['assined'][0]['booth'],
-          district: result['assined'][0]['district']);
+      myuser.name = result['name'];
+      myuser.phone = result['phone'].toString();
+      myuser.sex = result['sex'];
+      myuser.address = result['address'];
+      myuser.email = result['email'];
+      myuser.dob = result['dob'];
+
+      for (int i = 0; i < result['assined'].length; i++) {
+        userAsignedList.add(UserAsigned(
+            provision: result['assined'][i]['provision'].toString(),
+            district: result['assined'][i]['district'].toString(),
+            fedConstituency: result['assined'][i]['fedConstituency'].toString(),
+            provConstituency:
+                result['assined'][i]['provConstituency'].toString(),
+            localBody: result['assined'][i]['localBody'].toString(),
+            ward: result['assined'][i]['ward'].toString(),
+            booth: result['assined'][i]['booth']));
+      }
+    }
+  }
+
+  Widget boothAllicted() {
+    if (userAsignedList.length == 0) {
+      return Text('Not Assigned any bot');
     } else {
-      CircularProgressIndicator();
+      return ListView.builder(
+        itemCount: userAsignedList.length,
+        itemBuilder: (context, index) {
+          return Card(
+            child: ListTile(
+              onTap: () {},
+              title: Text(userAsignedList[index].provision),
+              subtitle: Text(userAsignedList[index].district),
+            ),
+          );
+        },
+      );
     }
   }
 
@@ -122,18 +149,34 @@ class _DashboardState extends State<Dashboard> {
       ),
       SliverFillRemaining(
           hasScrollBody: true,
-          child: ListView.builder(
-              itemCount: userListdash.length,
-              itemBuilder: (context, index) {
-                return Column(
+          child: loading == true
+              ? Center(
+                  child: Container(
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator()),
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("id: " + userListdash[index].id),
-                    Text("token:" + userListdash[index].token),
-                    Text("name:" + userListdash[index].name),
-                    Text("email:" + userListdash[index].email),
+                    Text(
+                      "${myuser.name}",
+                      style: TextStyle(fontSize: 33.0),
+                    ),
+                    Text("${myuser.phone}", style: TextStyle(fontSize: 33.0)),
+                    Text(
+                      "Address:${myuser.address}",
+                      style: TextStyle(fontSize: 33.0),
+                    ),
+                    Text(
+                      "name:${myuser.sex}",
+                      style: TextStyle(fontSize: 33.0),
+                    ),
+                    Expanded(child: boothAllicted())
+                    //Text("Booth: ${user.booth}"),
                   ],
-                );
-              })),
+                )),
+
       //Image(image: AssetImage("assets/1537431702.jpg"))
     ]));
   }
