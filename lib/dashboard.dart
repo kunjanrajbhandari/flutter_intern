@@ -4,9 +4,13 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:practice/assigned_booth.dart';
 import 'package:practice/model/token.dart';
+import 'package:practice/profile.dart';
 import 'auth/login.dart';
 import 'database/database.dart';
 
@@ -77,18 +81,57 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  Widget boothWidth() {
+    return ListView.builder(
+      itemCount: userAsignedList.length,
+      itemBuilder: (context, index) {
+        return Column(
+          children: [
+            Expanded(child: Text(userAsignedList[index].district)),
+            Expanded(child: Text(userAsignedList[index].fedConstituency)),
+            ListView.builder(
+                itemCount: userAsignedList[index].booth.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [Text(userAsignedList[index].booth[index])],
+                  );
+                })
+          ],
+        );
+      },
+    );
+  }
+
   Widget boothAllicted() {
     if (userAsignedList.length == 0) {
-      return Text('Not Assigned any bot');
+      return Center(
+          child: Text(
+        'Not Assigned Any Booth',
+        style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+      ));
     } else {
       return ListView.builder(
         itemCount: userAsignedList.length,
         itemBuilder: (context, index) {
           return Card(
-            child: ListTile(
-              onTap: () {},
-              title: Text(userAsignedList[index].provision),
-              subtitle: Text(userAsignedList[index].district),
+            color: Colors.blue,
+            child: Container(
+              height: 44.0,
+              child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AssignedBooth(
+                                userAsignedLists: userAsignedList)));
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 11.0, top: 11.0),
+                    child: Text(
+                      "Provision: " + userAsignedList[index].provision,
+                      style: TextStyle(fontSize: 18.0, color: Colors.white),
+                    ),
+                  )),
             ),
           );
         },
@@ -102,8 +145,8 @@ class _DashboardState extends State<Dashboard> {
         body: CustomScrollView(slivers: <Widget>[
       SliverAppBar(
         floating: true,
-        backgroundColor: Color(0xffEE2E35),
-        expandedHeight: 134.0,
+        backgroundColor: Colors.red.withOpacity(0.9),
+        expandedHeight: 188.0,
         flexibleSpace: FlexibleSpaceBar(
           background: Stack(
             children: [
@@ -123,25 +166,48 @@ class _DashboardState extends State<Dashboard> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 66.0, left: 355.0),
-                child: GestureDetector(
-                  onTap: () async {
-                    await DB.delete();
-                    var res = await DB.query();
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Login(
-                                  loading: false,
-                                )));
-                    print(res);
-                  },
-                  child: const Icon(
-                    Icons.logout,
-                    color: Colors.black,
+                padding: const EdgeInsets.only(left: 11.0, top: 202.0),
+                child: SizedBox(
+                  width: 44.0,
+                  height: 44.0,
+                  child: Image(
+                    image: AssetImage('assets/flag.jpg'),
                   ),
                 ),
-              )
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 122.0, top: 211.0),
+                child: Text(
+                  myuser.name != null ? (myuser.name).toString() : '',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 19.0),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 344.0, top: 202.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Profile(
+                                  name: myuser.name,
+                                  address: myuser.address,
+                                  phone: myuser.phone,
+                                  dob: myuser.dob,
+                                  sex: myuser.sex,
+                                  email: myuser.email,
+                                )));
+                  },
+                  child: const CircleAvatar(
+                    backgroundColor: Colors.black,
+                    backgroundImage: NetworkImage(
+                        'https://img.favpng.com/17/1/20/user-interface-design-computer-icons-default-png-favpng-A0tt8aVzdqP30RjwFGhjNABpm.jpg'),
+                  ),
+                ),
+              ),
             ],
           ),
           //Image(image: AssetImage('assets/madman.jpg'),fit: BoxFit.cover,),
@@ -159,25 +225,63 @@ class _DashboardState extends State<Dashboard> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "${myuser.name}",
-                      style: TextStyle(fontSize: 33.0),
-                    ),
-                    Text("${myuser.phone}", style: TextStyle(fontSize: 33.0)),
-                    Text(
-                      "Address:${myuser.address}",
-                      style: TextStyle(fontSize: 33.0),
-                    ),
-                    Text(
-                      "name:${myuser.sex}",
-                      style: TextStyle(fontSize: 33.0),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 11.0, left: 8.0),
+                      child: Text("Booth Assigned",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          )),
                     ),
                     Expanded(child: boothAllicted())
-                    //Text("Booth: ${user.booth}"),
                   ],
                 )),
-
-      //Image(image: AssetImage("assets/1537431702.jpg"))
     ]));
   }
 }
+
+
+// Padding(
+//             padding: const EdgeInsets.only(left: 11.0),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text(
+//                   "Provision: " + userAsignedList[index].provision,
+//                   style: TextStyle(
+//                       color: Colors.black, fontWeight: FontWeight.bold),
+//                 ),
+
+//                 Text(
+//                   "District: " + userAsignedList[index].district,
+//                   style: TextStyle(
+//                       color: Colors.black, fontWeight: FontWeight.bold),
+//                 ),
+//                 Text(
+//                   "Fed Constituency: " + userAsignedList[index].fedConstituency,
+//                   style: TextStyle(
+//                       color: Colors.black, fontWeight: FontWeight.bold),
+//                 ),
+//                 Text(
+//                   "Prov Constituency: " +
+//                       userAsignedList[index].provConstituency,
+//                   style: TextStyle(
+//                       color: Colors.black, fontWeight: FontWeight.bold),
+//                 ),
+//                 Text(
+//                   "localBody: " + userAsignedList[index].localBody,
+//                   style: TextStyle(
+//                       color: Colors.black, fontWeight: FontWeight.bold),
+//                 ),
+//                 // ListTile(
+//                 //   onTap: boothWidth,
+//                 //   title: Text(
+//                 //     "District: " + userAsignedList[index].district,
+//                 //     style: TextStyle(
+//                 //         color: Colors.white, fontWeight: FontWeight.bold),
+//                 //   ),
+//                 // ),
+//               ],
+//             ),
+//           );

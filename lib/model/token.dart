@@ -25,6 +25,8 @@ class UserAsigned {
 }
 
 class UserData {
+  Map<String, String> listUserData = {};
+
   String? name;
   String? sex;
   String? dob;

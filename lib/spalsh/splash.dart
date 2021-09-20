@@ -35,19 +35,18 @@ class _SplashState extends State<Splash> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Container(
-          height: 200.0,
-          width: 200.0,
-          child: Column(
-            children: [
-              Image(image: AssetImage('assets/935px-Logo_of_CPN_(UML).png')),
-              Text(
-                "splash screen",
-                style: TextStyle(fontSize: 20.0, color: Colors.red),
-              ),
-            ],
-          ),
+      body: Padding(
+        padding: const EdgeInsets.only(left: 111.0, top: 111.0),
+        child: Column(
+          children: [
+            //Image(image: AssetImage('flag.jpg')),
+
+            Container(
+                height: 300,
+                width: 200,
+                child: Image(image: AssetImage('assets/flag.jpg'))),
+            CircularProgressIndicator()
+          ],
         ),
       ),
     );
