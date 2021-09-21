@@ -1,17 +1,17 @@
-//import 'package:carousel_slider/carousel_slider.dart';
 import 'dart:core';
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:practice/assigned_booth.dart';
+import 'package:practice/function.dart';
+import 'package:practice/function.dart';
 import 'package:practice/model/token.dart';
 import 'package:practice/profile.dart';
-import 'auth/login.dart';
+import 'package:practice/validation.dart';
 import 'database/database.dart';
 
 class Dashboard extends StatefulWidget {
@@ -23,6 +23,7 @@ class _DashboardState extends State<Dashboard> {
   bool? loading = false;
   List<dynamic> userListdash = [];
   List<UserAsigned> userAsignedList = [];
+  Shortcut fun = Shortcut();
 
   @override
   String? token;
@@ -81,27 +82,6 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  Widget boothWidth() {
-    return ListView.builder(
-      itemCount: userAsignedList.length,
-      itemBuilder: (context, index) {
-        return Column(
-          children: [
-            Expanded(child: Text(userAsignedList[index].district)),
-            Expanded(child: Text(userAsignedList[index].fedConstituency)),
-            ListView.builder(
-                itemCount: userAsignedList[index].booth.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [Text(userAsignedList[index].booth[index])],
-                  );
-                })
-          ],
-        );
-      },
-    );
-  }
-
   Widget boothAllicted() {
     if (userAsignedList.length == 0) {
       return Center(
@@ -116,7 +96,7 @@ class _DashboardState extends State<Dashboard> {
           return Card(
             color: Colors.blue,
             child: Container(
-              height: 44.0,
+              height: 55.0,
               child: InkWell(
                   onTap: () {
                     Navigator.push(
@@ -127,9 +107,22 @@ class _DashboardState extends State<Dashboard> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(left: 11.0, top: 11.0),
-                    child: Text(
-                      "Provision: " + userAsignedList[index].provision,
-                      style: TextStyle(fontSize: 18.0, color: Colors.white),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Provision: " + userAsignedList[index].provision,
+                          style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 222.0),
+                          child: Image(
+                              image: NetworkImage(
+                                  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Logo_vote.svg/1200px-Logo_vote.svg.png")),
+                        )
+                      ],
                     ),
                   )),
             ),
@@ -146,7 +139,7 @@ class _DashboardState extends State<Dashboard> {
       SliverAppBar(
         floating: true,
         backgroundColor: Colors.red.withOpacity(0.9),
-        expandedHeight: 188.0,
+        expandedHeight: 134.0,
         flexibleSpace: FlexibleSpaceBar(
           background: Stack(
             children: [
@@ -166,48 +159,60 @@ class _DashboardState extends State<Dashboard> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 11.0, top: 202.0),
-                child: SizedBox(
-                  width: 44.0,
-                  height: 44.0,
-                  child: Image(
-                    image: AssetImage('assets/flag.jpg'),
+                padding: const EdgeInsets.only(top: 141.0),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 55.0,
+                  color: Colors.red.withOpacity(0.6),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 44.0,
+                        height: 44.0,
+                        child: Image(
+                          image: AssetImage('assets/flag.jpg'),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 55.0),
+                        child: Text(
+                          myuser.name != null ? (myuser.name).toString() : '',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 19.0,
+                          ),
+                        ),
+                      ),
+                      myuser.name == null
+                          ? Text("")
+                          : Padding(
+                              padding: const EdgeInsets.only(left: 98.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Profile(
+                                                name: myuser.name,
+                                                address: myuser.address,
+                                                phone: myuser.phone,
+                                                dob: myuser.dob,
+                                                sex: myuser.sex,
+                                                email: myuser.email,
+                                              )));
+                                },
+                                child: const CircleAvatar(
+                                  backgroundColor: Colors.black,
+                                  backgroundImage: NetworkImage(
+                                      'https://img.favpng.com/17/1/20/user-interface-design-computer-icons-default-png-favpng-A0tt8aVzdqP30RjwFGhjNABpm.jpg'),
+                                ),
+                              ),
+                            ),
+                    ],
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 122.0, top: 211.0),
-                child: Text(
-                  myuser.name != null ? (myuser.name).toString() : '',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 19.0),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 344.0, top: 202.0),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Profile(
-                                  name: myuser.name,
-                                  address: myuser.address,
-                                  phone: myuser.phone,
-                                  dob: myuser.dob,
-                                  sex: myuser.sex,
-                                  email: myuser.email,
-                                )));
-                  },
-                  child: const CircleAvatar(
-                    backgroundColor: Colors.black,
-                    backgroundImage: NetworkImage(
-                        'https://img.favpng.com/17/1/20/user-interface-design-computer-icons-default-png-favpng-A0tt8aVzdqP30RjwFGhjNABpm.jpg'),
-                  ),
-                ),
-              ),
+              )
             ],
           ),
           //Image(image: AssetImage('assets/madman.jpg'),fit: BoxFit.cover,),
@@ -226,7 +231,8 @@ class _DashboardState extends State<Dashboard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 11.0, left: 8.0),
+                      padding: const EdgeInsets.only(
+                          top: 33.0, left: 8.0, bottom: 22.0),
                       child: Text("Booth Assigned",
                           style: TextStyle(
                             color: Colors.black,
@@ -234,54 +240,9 @@ class _DashboardState extends State<Dashboard> {
                             fontSize: 20.0,
                           )),
                     ),
-                    Expanded(child: boothAllicted())
+                    Expanded(child: boothAllicted()),
                   ],
                 )),
     ]));
   }
 }
-
-
-// Padding(
-//             padding: const EdgeInsets.only(left: 11.0),
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Text(
-//                   "Provision: " + userAsignedList[index].provision,
-//                   style: TextStyle(
-//                       color: Colors.black, fontWeight: FontWeight.bold),
-//                 ),
-
-//                 Text(
-//                   "District: " + userAsignedList[index].district,
-//                   style: TextStyle(
-//                       color: Colors.black, fontWeight: FontWeight.bold),
-//                 ),
-//                 Text(
-//                   "Fed Constituency: " + userAsignedList[index].fedConstituency,
-//                   style: TextStyle(
-//                       color: Colors.black, fontWeight: FontWeight.bold),
-//                 ),
-//                 Text(
-//                   "Prov Constituency: " +
-//                       userAsignedList[index].provConstituency,
-//                   style: TextStyle(
-//                       color: Colors.black, fontWeight: FontWeight.bold),
-//                 ),
-//                 Text(
-//                   "localBody: " + userAsignedList[index].localBody,
-//                   style: TextStyle(
-//                       color: Colors.black, fontWeight: FontWeight.bold),
-//                 ),
-//                 // ListTile(
-//                 //   onTap: boothWidth,
-//                 //   title: Text(
-//                 //     "District: " + userAsignedList[index].district,
-//                 //     style: TextStyle(
-//                 //         color: Colors.white, fontWeight: FontWeight.bold),
-//                 //   ),
-//                 // ),
-//               ],
-//             ),
-//           );

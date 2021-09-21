@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:practice/auth/login.dart';
 import 'package:practice/database/database.dart';
 import 'package:practice/model/token.dart';
+import 'package:practice/widget/bootwidget.dart';
 
 class AssignedBooth extends StatelessWidget {
   List<UserAsigned> userAsignedLists = [];
@@ -19,7 +20,7 @@ class AssignedBooth extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 8.0, top: 11.0),
+                padding: const EdgeInsets.only(left: 8.0),
                 child: Text(
                   "Booth Details:                      ",
                   style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
@@ -30,15 +31,21 @@ class AssignedBooth extends StatelessWidget {
                 child: Text(
                   "Provision:                      " +
                       userAsignedLists[index].provision,
-                  style: TextStyle(fontSize: 20.0),
+                  style: TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 28.0, top: 11.0),
                 child: Text(
-                  "Distrit:                            " +
+                  "District:                         " +
                       userAsignedLists[index].district,
-                  style: TextStyle(fontSize: 20.0),
+                  style: TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               Padding(
@@ -46,7 +53,10 @@ class AssignedBooth extends StatelessWidget {
                 child: Text(
                   "Fed Constituency        " +
                       userAsignedLists[index].fedConstituency,
-                  style: TextStyle(fontSize: 20.0),
+                  style: TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               Padding(
@@ -54,7 +64,10 @@ class AssignedBooth extends StatelessWidget {
                 child: Text(
                   "Prov Consitituency:    " +
                       userAsignedLists[index].provConstituency,
-                  style: TextStyle(fontSize: 20.0),
+                  style: TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               Padding(
@@ -62,7 +75,10 @@ class AssignedBooth extends StatelessWidget {
                 child: Text(
                   "Local Body:                  " +
                       userAsignedLists[index].localBody,
-                  style: TextStyle(fontSize: 20.0),
+                  style: TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               Padding(
@@ -70,38 +86,31 @@ class AssignedBooth extends StatelessWidget {
                 child: Text(
                   "Ward:                              " +
                       userAsignedLists[index].ward,
-                  style: TextStyle(fontSize: 20.0),
+                  style: TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 28.0, top: 11.0),
-                    child: Text(
-                      "Booth:  ",
-                      style: TextStyle(fontSize: 20.0),
-                    ),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(left: 28.0, top: 29),
+                child: Text("Booth:  ",
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.w500,
+                    )),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 208.0),
+                padding: const EdgeInsets.only(left: 44.0, top: 5.0),
                 child: SizedBox(
-                  height: 222.0,
+                  height: 333,
+                  width: MediaQuery.of(context).size.width,
                   child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
                       itemCount: userAsignedLists[index].booth.length,
                       itemBuilder: (context, count) {
-                        return Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(userAsignedLists[index].booth[count],
-                                    style: TextStyle(fontSize: 18.0))
-                              ],
-                            ),
-                          ],
-                        );
+                        return BoothWidget(
+                            name: userAsignedLists[index].booth[count]);
                       }),
                 ),
               )
@@ -131,11 +140,6 @@ class AssignedBooth extends StatelessWidget {
               ),
             ),
           ],
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: 199.0,
-          color: Colors.black.withOpacity(0.3),
         ),
         Padding(
           padding: EdgeInsets.only(top: 139.0),
@@ -182,11 +186,16 @@ class AssignedBooth extends StatelessWidget {
           child: Container(
             height: 444.0,
             width: 359,
-            color: Color(0xffF1EBEB).withOpacity(0.8),
-            child: Column(
-              children: [
-                Expanded(child: boothWidth()),
-              ],
+            decoration: BoxDecoration(
+                color: Color(0xffF1EBEB),
+                borderRadius: BorderRadius.all(Radius.circular(22.0))),
+            child: Padding(
+              padding: const EdgeInsets.all(11.0),
+              child: Column(
+                children: [
+                  Expanded(child: boothWidth()),
+                ],
+              ),
             ),
           ),
         )

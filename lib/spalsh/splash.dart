@@ -19,6 +19,7 @@ class _SplashState extends State<Splash> {
   }
 
   navigateHome() async {
+    await Future.delayed(Duration(milliseconds: 1500), () {});
     var res = await DB.query();
 
     if (res == [] || res.isEmpty) {

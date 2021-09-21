@@ -102,7 +102,9 @@ class Profile extends StatelessWidget {
         child: Container(
           height: 333.0,
           width: 355.0,
-          color: Color(0xffF1EBEB),
+          decoration: BoxDecoration(
+              color: Color(0xffF1EBEB),
+              borderRadius: BorderRadius.all(Radius.circular(11.0))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
