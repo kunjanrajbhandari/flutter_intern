@@ -94,7 +94,7 @@ class _DashboardState extends State<Dashboard> {
         itemCount: userAsignedList.length,
         itemBuilder: (context, index) {
           return Card(
-            color: Colors.blue,
+            color: Colors.red[200],
             child: Container(
               height: 55.0,
               child: InkWell(
@@ -117,7 +117,7 @@ class _DashboardState extends State<Dashboard> {
                               fontWeight: FontWeight.bold),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 222.0),
+                          padding: const EdgeInsets.only(left: 177.0),
                           child: Image(
                               image: NetworkImage(
                                   "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Logo_vote.svg/1200px-Logo_vote.svg.png")),
@@ -227,21 +227,32 @@ class _DashboardState extends State<Dashboard> {
                       width: 50,
                       child: CircularProgressIndicator()),
                 )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 33.0, left: 8.0, bottom: 22.0),
-                      child: Text("Booth Assigned",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20.0,
-                          )),
-                    ),
-                    Expanded(child: boothAllicted()),
-                  ],
+              : Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      image: DecorationImage(
+                          image: AssetImage(
+                            'assets/flag.jpg',
+                          ),
+                          fit: BoxFit.contain)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: 33.0,
+                          left: 8.0,
+                        ),
+                        child: Text("Booth Assigned",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20.0,
+                            )),
+                      ),
+                      Expanded(child: boothAllicted()),
+                    ],
+                  ),
                 )),
     ]));
   }

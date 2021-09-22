@@ -5,6 +5,7 @@ class VoterList {
   String? sex;
   String? relation;
   int? contact;
+  String? voteTo;
 
   int? yes;
   int? no;
@@ -23,12 +24,14 @@ class VoterList {
       required this.no,
       required this.maybe,
       required this.abcParty,
+      voteTo,
       required this.otherparty});
 }
 
 class PartyList {
   String? name;
   String photo;
+  int? count;
 
   PartyList({required this.name, required this.photo});
 }

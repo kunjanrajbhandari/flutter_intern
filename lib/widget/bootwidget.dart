@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:practice/widget/booth_edit.dart';
+import 'package:practice/widget/voterlist.dart';
 
 class BoothWidget extends StatelessWidget {
   final String name;
